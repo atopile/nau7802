@@ -1,0 +1,2 @@
+module Nau7802:
+    signal gnd
