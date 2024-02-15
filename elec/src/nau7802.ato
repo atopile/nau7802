@@ -1,2 +1,83 @@
-module Nau7802:
-    signal gnd
+import I2C from "generics/interfaces.ato"
+import Power from "generics/interfaces.ato"
+import Resistor from "generics/resistors.ato"
+import Capacitor from "generics/capacitors.ato"
+import DiffPair from "generics/interfaces.ato"
+
+component NAU7802SGI_C5180029:
+    # component NAU7802SGI_C5180029
+    footprint = "SOP-16_L9.9-W3.9-P1.27-LS6.0-BL"
+    lcsc_id = "C5180029"
+    mpn = "C5180029"
+    # pins
+    signal REFP ~ pin 1
+    signal VIN1N ~ pin 2
+    signal VIN1P ~ pin 3
+    signal VIN2N ~ pin 4
+    signal VIN2P ~ pin 5
+    signal VBG ~ pin 6
+    signal REFN ~ pin 7
+    signal AVSS ~ pin 8
+    signal DVSS ~ pin 9
+    signal XIN ~ pin 10
+    signal XOUT ~ pin 11
+    signal DRDY ~ pin 12
+    signal SCL ~ pin 13
+    signal SDA ~ pin 14
+    signal DVDD ~ pin 15
+    signal AVDD_LDO ~ pin 16
+
+    # pin types
+module NAU7802:
+    ic = new NAU7802SGI_C5180029
+
+    power = new Power
+    power.vcc ~ ic.DVDD
+    power.gnd ~ ic.DVSS
+    power.gnd ~ ic.AVSS
+
+    force = new Power
+    force.vcc ~ ic.AVDD_LDO
+    force.gnd ~ power.gnd
+
+    i2c = new I2C
+    i2c.sda ~ ic.SDA
+    i2c.scl ~ ic.SCL
+    i2c.gnd ~ power.gnd
+
+    sense = new DiffPair
+    # input filter
+    sense_n_r = new Resistor
+    sense_n_r.value = 51ohm +/- 20%
+    sense_n_r.package = "0402"
+
+    sense_p_r = new Resistor
+    sense_p_r.value = 51ohm +/- 20%
+    sense_p_r.package = "0402"
+
+    sense_cap = new Capacitor
+    sense_cap.value = 100nF +/- 20%
+    sense_cap.package = "0402"
+
+    ic.VIN1N ~ sense_n_r.p1; sense_n_r.p2 ~ sense.n
+    ic.VIN1P ~ sense_p_r.p1; sense_p_r.p2 ~ sense.p
+
+    ic.VIN1N ~ sense_cap.p1; sense_cap.p2 ~ ic.VIN1P
+
+    # bypass caps
+    vbg_cap = new Capacitor
+    vbg_cap.value = 100nF +/- 20%
+    vbg_cap.package = "0402"
+    ic.VBG ~ vbg_cap.p1; vbg_cap.p2 ~ power.gnd
+
+    refp_cap = new Capacitor
+    refp_cap.value = 100nF +/- 20%
+    refp_cap.package = "0402"
+    ic.REFP ~ refp_cap.p1; refp_cap.p2 ~ power.gnd
+
+    ic.REFN ~ power.gnd
+
+    VIN2_cap = new Capacitor
+    VIN2_cap.value = 470pF +/- 50%
+    VIN2_cap.package = "0402"
+    ic.VIN2N ~ VIN2_cap.p1; VIN2_cap.p2 ~ ic.VIN2P

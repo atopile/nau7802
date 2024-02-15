@@ -1,6 +1,6 @@
 ato-version: ^0.2.0
 builds:
   default:
-    entry: elec/src/nau7802.ato:Nau7802
+    entry: elec/src/nau7802.ato:NAU7802
 dependencies:
 - generics
