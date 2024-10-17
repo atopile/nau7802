@@ -221,7 +221,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "nau7802.kicad_pro",
+    "filename": "dual.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -255,7 +255,7 @@
     "last_paths": {
       "gencad": "",
       "idf": "",
-      "netlist": "../../../build/default.net",
+      "netlist": "../../../build/dual.net",
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
